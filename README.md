@@ -17,9 +17,9 @@ To install this package, you can download it from your favourite package manager
 
 ### Import 
 
-ESM
-`import ldjson from '@danm/ld-json-query';`
-CommonJS
+ESM    
+`import ldjson from '@danm/ld-json-query';`   
+CommonJS    
 `const ldjson = require('@danm/ld-json-query);`
 
 ### API
