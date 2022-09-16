@@ -1,0 +1,29 @@
+{
+  "name": "@danm/ld-json-query",
+  "version": "1.0.0",
+  "description": "Query data from a large LD-JSON file",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npx vitest",
+    "build": "npx tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danm/ld-json-query.git"
+  },
+  "author": "Daniel Morrison <daniel.morrison@mac.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danm/ld-json-query/issues"
+  },
+  "homepage": "https://github.com/danm/ld-json-query#readme",
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}
