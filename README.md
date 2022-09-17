@@ -3,7 +3,7 @@
 ## Description
 Line delimitered JSON is a file with many valid JSON documents inside of it which are seperated by a simple line break. These files are useful when you have a lot of JSON data that may not fit into memory which need to be filtered and sorted.
 
-This package will let you stream over a LDJSON file, running a query function in order to filter documents you do not need keeping large files out of RAM allowing you service to remain fast and light. It does this by using the Node FS Read stream, appending the filtered output to a new file.
+This package will let you stream over a LDJSON file, running a query function in order to filter documents you do not need keeping large files out of RAM allowing you service to remain fast and light. It does this by using the Node FS Read stream, filtering and transforming the payload and then writing to a new file using a Write stream.
 
 ## Installing
 
@@ -37,8 +37,9 @@ An object to pass into the 2nd `opts` argument
 | -- | -- | -- | -- | -- |
 | clearOld | boolean | true | false | If true, any old output will be deleted |
 | inflate | boolean | true | false | If the file has been compressed, set this to true to decompress during the stream |
+| deflate | boolean | true | false | Will compress the output of the stream |
 | verbose | boolean | true | false | Print all logs, not just errors |
-| output | string | false | | The location of where the outputed file should be stored. The output currently doesn't support compression or S3 |
+| output | string | false | | The location of where the outputed file should be stored. The output currently doesn't support S3 |
 | aws | AWS S3 Config Object | required if using S3 | | If retrieving the file from S3, this object is required |
 
 #### Query
@@ -50,9 +51,9 @@ A function to pass into the 3rd argument
 ### Example
 
 #### File System
-You can laod a LDJSON file from the file system by passing in a file system path. The file is GZIP'd so you can pass in the `inflate = true` property to the `option` object.
+You can load a LDJSON file from the file system by passing in a file system path. The file is GZIP'd so you can pass in the `inflate = true` property to the `option` object.
 
-The query function will filter out any JSON documents which do not match the 3 conditions. The documents which return true will be appended to a new file called  `filtered-output.ldjson`
+The query function will filter out any JSON documents which do not match the 3 conditions. Return the object that you want to be added to the new output file  `filtered-output.ldjson`. Return `false` will omit the object from the output.
 
 ```js
 import ldjson from '@danm/ld-json-query';
@@ -90,14 +91,7 @@ main(
 
 - Tests
 - Write output to S3
-- Compress output
 - Command line options
 - Additional cloud providers
 
 PR's welcome!
-
-
-
-
-
-

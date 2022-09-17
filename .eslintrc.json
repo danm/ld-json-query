@@ -4,7 +4,8 @@
     "airbnb-typescript/base"
   ],
   "rules": {
-    "no-console":"off"
+    "no-console":"off",
+    "no-underscore-dangle":"off"
   },
   "parserOptions": {
     "project": "./tsconfig.json"

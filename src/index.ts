@@ -1,13 +1,14 @@
 import fs from 'fs';
 import readline from 'readline';
 import zlib from 'zlib';
+import stream from 'stream';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 type Options = {
   // should the output file be deleted on start
   clearOld?: boolean,
-  inflate?: boolean,
-  deflate?: boolean,
+  inflate?: boolean, // decompress
+  deflate?: boolean, // compress
   verbose?: boolean,
   output?: string,
   aws?: any,
@@ -29,46 +30,71 @@ function getFileFromFS(src: string) {
   return fs.createReadStream(src);
 }
 
-function writeToFile(json: any, output: string = './tmp-output.ld-json') {
-  const str = JSON.stringify(json);
-  fs.appendFileSync(output, `${str}\n`);
-}
-
-async function parseFile(
-  stream: fs.ReadStream,
+function parseFile(
+  readStream: fs.ReadStream,
   query: (json: any) => any,
   opts: Options,
 ) {
-  const stats = {
-    found: 0,
-    removed: 0,
-    error: 0,
-  };
+  return new Promise((resolve, reject) => {
+    const stats = {
+      found: 0,
+      removed: 0,
+      error: 0,
+    };
 
-  const inflator = zlib.createGunzip();
-  const reader = readline.createInterface({
-    input: opts.inflate ? stream.pipe(inflator) : stream,
-  });
-
-  reader.on('line', (data) => {
-    let json;
-    try {
-      json = JSON.parse(data);
-      const filtered = query(json);
-      if (filtered !== null) {
-        stats.found += 1;
-        writeToFile(filtered, opts.output);
-      } else {
-        stats.removed += 1;
-      }
-
-      if (opts.verbose) console.log(json);
-    } catch (e) {
-      if (e instanceof Error) {
-        stats.error += 1;
-        console.error(e.message);
-      }
+    const outputStream = new stream.Readable();
+    const zipper = zlib.createGzip();
+    const writer = fs.createWriteStream(opts.output || './tmp-output.ld-json');
+    if (opts.deflate === true) {
+      outputStream._read = () => {};
+      outputStream.pipe(zipper).pipe(writer);
+    } else {
+      outputStream._read = () => {};
+      outputStream.pipe(writer);
     }
+
+    const inflator = zlib.createGunzip();
+    const reader = readline.createInterface({
+      input: opts.inflate ? readStream.pipe(inflator) : readStream,
+    });
+
+    writer.on('close', () => {
+      resolve(stats);
+    });
+    writer.on('error', (err) => {
+      console.log(err);
+      reject(err);
+    });
+
+    reader.on('line', (data) => {
+      let json;
+      try {
+        json = JSON.parse(data);
+        const filtered = query(json);
+        if (filtered !== null) {
+          stats.found += 1;
+          outputStream.push(`${JSON.stringify(filtered)}\n`);
+        } else {
+          stats.removed += 1;
+        }
+
+        if (opts.verbose) console.log(json);
+      } catch (e) {
+        if (e instanceof Error) {
+          stats.error += 1;
+          console.error(e.message);
+        }
+      }
+    });
+
+    reader.on('error', (err) => {
+      console.log(err);
+      stats.error += 1;
+    });
+
+    reader.on('close', () => {
+      outputStream.push(null);
+    });
   });
 }
 
@@ -84,11 +110,11 @@ export default async function main(src: string, opts: Options, query: (json: any
   }
 
   if (src.indexOf('s3://') === 0) {
-    const stream = await getFromS3(src, opts);
-    if (stream === undefined) return;
-    parseFile(stream, query, opts);
+    const streamer = await getFromS3(src, opts);
+    if (streamer === undefined) return;
+    parseFile(streamer, query, opts);
   } else {
-    const stream = getFileFromFS(src);
-    parseFile(stream, query, opts);
+    const streamer = getFileFromFS(src);
+    parseFile(streamer, query, opts);
   }
 }
