@@ -1,4 +1,5 @@
 # LDJSON Query
+Query data from a large line delimited JSON files using JavaScript efficiently using `node:stream`. Not to be confused with JSON-LD (JSON linked date)
 
 ## Description
 Line delimitered JSON is a file with many valid JSON documents inside of it which are seperated by a simple line break. These files are useful when you have a lot of JSON data that may not fit into memory which need to be filtered and sorted.
