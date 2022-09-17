@@ -4,7 +4,7 @@ Query data from a large line delimited JSON files using JavaScript efficiently u
 ## Description
 Line delimitered JSON is a file with many valid JSON documents inside of it which are seperated by a simple line break. These files are useful when you have a lot of JSON data that may not fit into memory which need to be filtered and sorted.
 
-This package will let you stream over a LDJSON file, running a query function in order to filter documents you do not need keeping large files out of RAM allowing you service to remain fast and light. It does this by using the Node FS Read stream, filtering and transforming the payload and then writing to a new file using a Write stream.
+This package will let you stream over a LDJSON file, running a query function in order to filter documents you do not need, keeping large files out of RAM allowing your service to remain fast and light. It does this by using Node read streams, filtering and transforming the payload and then writing to a new file using a Write stream.
 
 ## Installing
 
