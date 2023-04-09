@@ -59,7 +59,7 @@ The query function will filter out any JSON documents which do not match the 3 c
 ```js
 import ldjson from '@danm/ld-json-query';
 
-main(
+ldjson(
   './file.ldjson.gz',
   { inflate: true, output: './filtered-output.ldjson' },
   (json) => {
@@ -78,7 +78,7 @@ When the function starts, any old files that that match the output file name wil
 ```js
 import ldjson from '@danm/ld-json-query';
 
-main(
+ldjson(
   's3://mybucket/my-file.ldjson.gz',
   { clearOld: true, verbose: true, inflate: true, output: './filtered-output.ldjson' },
   (json) => {
