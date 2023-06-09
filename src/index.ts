@@ -1,7 +1,7 @@
-import fs from 'fs';
-import readline from 'readline';
-import zlib from 'zlib';
-import stream from 'stream';
+import fs from 'node:fs';
+import readline from 'node:readline';
+import zlib from 'node:zlib';
+import stream from 'node:stream';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 type Options = {
@@ -14,7 +14,7 @@ type Options = {
   aws?: any,
 };
 
-async function getFromS3(src: string, opts: Options) {
+export async function getFromS3(src: string, opts: Options) {
   const srcWithoutProtocol = src.slice('s3://'.length);
   const locationOfFirstSlash = srcWithoutProtocol.indexOf('/');
   const bucket = srcWithoutProtocol.slice(0, locationOfFirstSlash);
@@ -23,14 +23,14 @@ async function getFromS3(src: string, opts: Options) {
   const s3Client = new S3Client(opts.aws);
   const command = new GetObjectCommand({ Bucket: bucket, Key: decodeURIComponent(key) });
   const s3Item = await s3Client.send(command);
-  return s3Item.Body as fs.ReadStream;
+  return s3Item.Body;
 }
 
-function getFileFromFS(src: string) {
+export function getFileFromFS(src: string) {
   return fs.createReadStream(src);
 }
 
-function parseFile(
+export function parseFile(
   readStream: fs.ReadStream,
   query: (json: any) => any,
   opts: Options,
@@ -112,7 +112,7 @@ export default async function main(src: string, opts: Options, query: (json: any
   if (src.indexOf('s3://') === 0) {
     const streamer = await getFromS3(src, opts);
     if (streamer === undefined) return;
-    parseFile(streamer, query, opts);
+    parseFile(streamer as any, query, opts);
   } else {
     const streamer = getFileFromFS(src);
     parseFile(streamer, query, opts);

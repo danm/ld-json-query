@@ -1,9 +1,13 @@
 {
   "name": "@danm/ld-json-query",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Query data from a large LD-JSON file",
   "main": "lib/index.js",
-  "files": ["lib"],
+  "types": "lib/index.d.ts",
+  "type": "module",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "npx vitest",
     "build": "npx tsc"
@@ -19,15 +23,18 @@
   },
   "homepage": "https://github.com/danm/ld-json-query#readme",
   "devDependencies": {
-    "@tsconfig/node16": "^1.0.3",
+    "@tsconfig/node18": "^2.0.1",
+    "@types/node": "^18.1.7",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "eslint": "^8.23.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0"
+    "eslint-plugin-import": "^2.26.0",
+    "vitest": "^0.31.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.171.0"
+    "@aws-sdk/client-s3": "^3.171.0",
+    "typescript": "^5.1.3"
   }
 }
